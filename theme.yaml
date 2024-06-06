@@ -1,0 +1,74 @@
+id: wordpress-themes-enumeration
+
+info:
+  name: WordPress Themes Enumeration
+  author: Audric Lorthios
+  severity: info
+  description: This template extracts the names of all WordPress themes from a site.
+  tags: wordpress, wp-theme
+  metadata:
+    max-request: 1
+    plugin_namespace: user-role-editor
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    extractors:
+      - type: regex
+        part: body
+        name: theme-name
+        group: 1
+        regex:
+          - '\/wp-content\/themes\/([^\/]+)\/[^\/]+\.css' # Extract theme names
+
+      - type: regex
+        part: body
+        name: version
+        group: 1
+        regex:
+          - '\/wp-content\/themes\/[^\/]+\/[^\/]+\.css\?ver=([\w\.]+)' # Extract version numbe
+      
+      - type: regex
+        part: body
+        name: wp-theme
+        internal: true
+        regex:
+          - 'https?:\/\/[^\/]+\/wp-content\/themes\/[^\/]+\/[^\/]+\.css\?ver=[\w\.]+' # Extract version numbe
+
+    matchers-condition: or
+    matchers:
+      - type: status
+        status:
+          - 200
+      
+      - type: regex
+        part: body
+        name : wp-theme
+        internal: true
+        regex:
+          - 'https?:\/\/[^\/]+\/wp-content\/themes\/[^\/]+\/[^\/]+\.css\?ver=[\w\.]+' # Regex to capture the themes
+
+  # - method: GET
+  #   path:
+  #     - "{{wp-theme}}"
+  #   extractors:
+  #     - type: regex
+  #       part: body
+  #       name: version2
+  #       group: 1
+  #       regex:
+  #         - '.*' # Extract theme names
+
+  #   matchers-condition: or
+  #   matchers:
+  #     - type: status
+  #       status:
+  #         - 200
+      
+  #     - type: regex
+  #       part: body
+  #       name : version3
+  #       regex:
+  #         - '.*' # Regex to capture the themes
