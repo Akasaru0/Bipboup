@@ -1,0 +1,64 @@
+id: wordpress-themes-enumeration
+
+info:
+  name: WordPress Themes Enumeration
+  author: Audric Lorthios
+  severity: info
+  description: This template extracts the names of all WordPress themes from a site.
+  tags: wordpress, wp-theme
+  metadata:
+    max-request: 1
+    plugin_namespace: user-role-editor
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    extractors:
+      - type: regex
+        part: body
+        name: theme-name-location
+        internal : true
+        group: 1
+        regex:
+          - '\/wp-content\/themes\/([^\/]+)\/[^\/]+\.css' # Extract theme names
+
+      - type: regex
+        part: body
+        name: version_css
+        group: 1
+        regex:
+          - '\/wp-content\/themes\/[^\/]+\/[^\/]+\.css\?ver=([\w\.]+)' # Extract version numbe
+      
+
+  - method: GET
+    path:
+      - "{{BaseURL}}/wp-content/themes/{{theme-name-location}}/readme.txt"
+      
+    extractors:
+      - type: regex
+        part: body
+        name: theme
+        group: 1
+        regex:
+          - 'WP (\w+) ([\d.]+)' # Extract theme names
+      - type: regex
+        part: body
+        name: version
+        group: 2
+        regex:
+          - 'WP (\w+) ([\d.]+)' # Extract theme names
+
+    matchers-condition: or
+    matchers:
+      - type: status
+        status:
+          - 200
+      
+      - type: regex
+        part: body
+        name : wp-theme
+        internal: true
+        regex:
+          - 'WP (\w+) ([\d.]+)' # Regex to capture the themes
