@@ -24,14 +24,6 @@ http:
         regex:
           - '\/wp-content\/themes\/([^\/]+)\/[^\/]+\.css' # Extract theme names
 
-      - type: regex
-        part: body
-        name: version_css
-        group: 1
-        regex:
-          - '\/wp-content\/themes\/[^\/]+\/[^\/]+\.css\?ver=([\w\.]+)' # Extract version numbe
-      
-
   - method: GET
     path:
       - "{{BaseURL}}/wp-content/themes/{{theme-name-location}}/readme.txt"
@@ -62,3 +54,30 @@ http:
         internal: true
         regex:
           - 'WP (\w+) ([\d.]+)' # Regex to capture the themes
+
+
+
+
+
+
+  #   path:
+  #     - "{{wp-theme}}"
+  #   extractors:
+  #     - type: regex
+  #       part: body
+  #       name: version2
+  #       group: 1
+  #       regex:
+  #         - '.*' # Extract theme names
+
+  #   matchers-condition: or
+  #   matchers:
+  #     - type: status
+  #       status:
+  #         - 200
+      
+  #     - type: regex
+  #       part: body
+  #       name : version3
+  #       regex:
+  #         - '.*' # Regex to capture the themes
